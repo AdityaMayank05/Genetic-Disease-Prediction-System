@@ -130,11 +130,11 @@ with col3:
     location = st.text_input("Location of Institute", value="City Center")
     
     st.subheader("Symptoms")
-    symptom1 = st.checkbox("Symptom 1")
-    symptom2 = st.checkbox("Symptom 2")
-    symptom3 = st.checkbox("Symptom 3")
-    symptom4 = st.checkbox("Symptom 4")
-    symptom5 = st.checkbox("Symptom 5")
+    symptom1 = st.checkbox("Vision Problems", help="Issues with sight, including blurry vision or vision loss")
+    symptom2 = st.checkbox("Muscle Weakness", help="Reduced strength in muscles")
+    symptom3 = st.checkbox("Developmental Delay", help="Slower than usual development of physical or mental skills")
+    symptom4 = st.checkbox("Breathing Difficulties", help="Problems with normal breathing patterns")
+    symptom5 = st.checkbox("Neurological Issues", help="Seizures, coordination problems, or cognitive impairment")
 
 # Create prediction button
 if st.button("Predict Genetic Disorder"):
@@ -175,11 +175,11 @@ if st.button("Predict Genetic Disorder"):
             'Test 3': test3,
             'Test 4': test4,
             'Test 5': test5,
-            'Symptom 1': float(symptom1),
-            'Symptom 2': float(symptom2),
-            'Symptom 3': float(symptom3),
-            'Symptom 4': float(symptom4),
-            'Symptom 5': float(symptom5)
+            'Symptom 1': float(symptom1),  # Vision Problems
+            'Symptom 2': float(symptom2),  # Muscle Weakness
+            'Symptom 3': float(symptom3),  # Developmental Delay
+            'Symptom 4': float(symptom4),  # Breathing Difficulties
+            'Symptom 5': float(symptom5)   # Neurological Issues
         }
         
         # Convert to DataFrame
