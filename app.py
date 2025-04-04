@@ -64,9 +64,20 @@ def prepare_features_and_target(df, target_column='Genetic Disorder'):
     """
     Separate features and target, scale features
     """
-    # Separate features and target
-    X = df.drop([target_column, 'Disorder Subclass'], axis=1, errors='ignore')
-    y = df[target_column] if target_column in df.columns else None
+    # Make a copy to avoid modifying the original
+    df = df.copy()
+    
+    # For prediction mode, no target column is needed
+    if target_column is None or target_column not in df.columns:
+        # Ensure all the columns needed for prediction are available
+        # Dropping these columns if they exist as they're not features
+        columns_to_drop = ['Genetic Disorder', 'Disorder Subclass']
+        X = df.drop(columns_to_drop, axis=1, errors='ignore')
+        y = None
+    else:
+        # Separate features and target for training
+        X = df.drop([target_column, 'Disorder Subclass'], axis=1, errors='ignore')
+        y = df[target_column] if target_column in df.columns else None
     
     # Ensure all data is numeric
     for col in X.columns:
@@ -76,7 +87,7 @@ def prepare_features_and_target(df, target_column='Genetic Disorder'):
     
     # Scale features
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
     
     return X_scaled, y, scaler
 
@@ -100,14 +111,15 @@ def create_neural_network(input_shape, num_classes):
     """
     Create a neural network model
     """
-    model = models.Sequential([
-        layers.Dense(128, activation='relu', input_shape=input_shape),
-        layers.Dropout(0.3),
-        layers.Dense(64, activation='relu'),
-        layers.Dropout(0.2),
-        layers.Dense(32, activation='relu'),
-        layers.Dense(num_classes, activation='softmax')
-    ])
+    inputs = tf.keras.Input(shape=input_shape)
+    x = layers.Dense(128, activation='relu')(inputs)
+    x = layers.Dropout(0.3)(x)
+    x = layers.Dense(64, activation='relu')(x)
+    x = layers.Dropout(0.2)(x)
+    x = layers.Dense(32, activation='relu')(x)
+    outputs = layers.Dense(num_classes, activation='softmax')(x)
+    
+    model = tf.keras.Model(inputs=inputs, outputs=outputs)
     
     model.compile(optimizer='adam',
                  loss='sparse_categorical_crossentropy',
